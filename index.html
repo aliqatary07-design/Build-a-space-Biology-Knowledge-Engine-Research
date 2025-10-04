@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Biology Knowledge Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Deep Space Blue -->
+    <!-- Application Structure Plan: The application is designed as a single-page narrative dashboard that guides the user from the high-level problem to the detailed solution and its impact. The structure is: 1) Hero section establishing the "Why" (the data challenge). 2) An interactive architecture diagram to explain the "How" (the engine's components). 3) A section on data sources to detail the "What" (the foundational data). 4) An interactive roadmap timeline for the "When" (the development plan). 5) An impact section showing the "So What" (the applications and benefits). This thematic flow was chosen over a linear report summary to make a complex technical project immediately understandable and explorable, allowing users to dive into the areas that interest them most, fostering engagement over passive reading. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Scale of space biology data. Goal: Inform & Impress. Viz: Animated stat cards. Interaction: None (automatic). Justification: Quickly conveys the magnitude of the problem. Method: HTML/CSS/JS.
+        - Report Info: System architecture components. Goal: Organize & Explain. Viz: Interactive block diagram. Interaction: Click component to see details. Justification: Visually represents system layers and relationships far more effectively than a list. Method: HTML/Tailwind/JS.
+        - Report Info: Development roadmap phases and tasks. Goal: Show Change over Time. Viz: Interactive Gantt-style chart. Interaction: Hover for details, filter by phase. Justification: Provides a clear, visual projection of the project timeline and allows for focused exploration of each phase. Library: Chart.js (Canvas).
+        - Report Info: Data sources and applications. Goal: Inform & Categorize. Viz: Card-based grid layout. Interaction: Hover effects. Justification: Presents discrete pieces of information in a visually appealing and easily scannable format. Method: HTML/Tailwind. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #1a202c;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 500px;
+            max-height: 60vh;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .active-nav, .nav-link:hover {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+        .component-item {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .component-item:hover, .component-item.selected {
+            transform: scale(1.03);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background-color: #e0f2fe;
+            border-color: #3b82f6;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .phase-button.active {
+            background-color: #1d4ed8;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-[#f8f7f4]/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">SBKE Explorer</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#vision" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Vision</a>
+                <a href="#architecture" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Architecture</a>
+                <a href="#roadmap" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Roadmap</a>
+                <a href="#impact" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Impact</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="vision" class="text-center py-16">
+            <h2 class="text-5xl font-extrabold text-gray-900 leading-tight">Building the Future of Space Biology Research</h2>
+            <p class="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">The Space Biology Knowledge Engine (SBKE) is a transformative initiative to unify decades of disparate life sciences data into an intelligent, queryable, and predictive platform, accelerating discovery for future deep space missions.</p>
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div class="stat-card p-6 rounded-2xl shadow-lg border border-gray-200/50">
+                    <p class="text-5xl font-bold text-blue-600" id="studies-stat">0+</p>
+                    <p class="mt-2 text-lg text-gray-700">Studies in OSDR</p>
+                </div>
+                <div class="stat-card p-6 rounded-2xl shadow-lg border border-gray-200/50">
+                    <p class="text-5xl font-bold text-blue-600" id="pubs-stat">0K+</p>
+                    <p class="mt-2 text-lg text-gray-700">Global Publications</p>
+                </div>
+                <div class="stat-card p-6 rounded-2xl shadow-lg border border-gray-200/50">
+                    <p class="text-5xl font-bold text-blue-600" id="species-stat">0+</p>
+                    <p class="mt-2 text-lg text-gray-700">Species Investigated</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="architecture" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900">Interactive Engine Architecture</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">The SBKE is built on a layered architecture, progressing from raw data to actionable knowledge. Click on any component below to explore its function and key features.</p>
+            </div>
+            <div class="flex flex-col lg:flex-row gap-8">
+                <div class="flex-grow space-y-6">
+                    <div class="p-4 bg-white rounded-lg shadow-md">
+                        <h3 class="font-bold text-indigo-600 text-center mb-4">Data Sources & Ingestion</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="component-item border-2 border-indigo-200 p-3 rounded-lg text-center bg-indigo-50" data-component="NASA OSDR">NASA OSDR</div>
+                            <div class="component-item border-2 border-indigo-200 p-3 rounded-lg text-center bg-indigo-50" data-component="SpaceLID">SpaceLID</div>
+                            <div class="component-item border-2 border-indigo-200 p-3 rounded-lg text-center bg-indigo-50" data-component="ETL Pipelines">ETL Pipelines</div>
+                            <div class="component-item border-2 border-indigo-200 p-3 rounded-lg text-center bg-indigo-50" data-component="Automated Curation">Automated Curation</div>
+                        </div>
+                    </div>
+                    <div class="text-center text-3xl font-thin text-gray-400">↓</div>
+                     <div class="p-4 bg-white rounded-lg shadow-md">
+                        <h3 class="font-bold text-purple-600 text-center mb-4">Knowledge Organization</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                             <div class="component-item border-2 border-purple-200 p-3 rounded-lg text-center bg-purple-50" data-component="SLSO Ontology">SLSO Ontology</div>
+                             <div class="component-item border-2 border-purple-200 p-3 rounded-lg text-center bg-purple-50" data-component="Data Classification">Data Classification</div>
+                        </div>
+                    </div>
+                    <div class="text-center text-3xl font-thin text-gray-400">↓</div>
+                    <div class="p-4 bg-white rounded-lg shadow-md">
+                        <h3 class="font-bold text-teal-600 text-center mb-4">Knowledge Engine Core</h3>
+                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="component-item border-2 border-teal-200 p-3 rounded-lg text-center bg-teal-50" data-component="Query Processing">Query Processing</div>
+                            <div class="component-item border-2 border-teal-200 p-3 rounded-lg text-center bg-teal-50" data-component="Inference Engine">Inference Engine</div>
+                            <div class="component-item border-2 border-teal-200 p-3 rounded-lg text-center bg-teal-50" data-component="Knowledge Graph">Knowledge Graph</div>
+                        </div>
+                    </div>
+                    <div class="text-center text-3xl font-thin text-gray-400">↓</div>
+                    <div class="p-4 bg-white rounded-lg shadow-md">
+                        <h3 class="font-bold text-sky-600 text-center mb-4">Interface & Applications</h3>
+                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="component-item border-2 border-sky-200 p-3 rounded-lg text-center bg-sky-50" data-component="Web Portal">Web Portal</div>
+                            <div class="component-item border-2 border-sky-200 p-3 rounded-lg text-center bg-sky-50" data-component="APIs">APIs</div>
+                            <div class="component-item border-2 border-sky-200 p-3 rounded-lg text-center bg-sky-50" data-component="Hypothesis Generation">Hypothesis Generation</div>
+                            <div class="component-item border-2 border-sky-200 p-3 rounded-lg text-center bg-sky-50" data-component="Mission Planning">Mission Planning</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="details-panel" class="lg:w-1/3 p-6 bg-white rounded-2xl shadow-xl sticky top-24 h-fit min-h-[300px]">
+                    <h3 id="details-title" class="text-2xl font-bold text-gray-800">Select a Component</h3>
+                    <p id="details-description" class="mt-4 text-gray-600">Click on a component from the architecture diagram to see its detailed description and key features here.</p>
+                    <div id="details-features-container" class="mt-6 hidden">
+                        <h4 class="font-semibold text-gray-700">Key Features:</h4>
+                        <ul id="details-features" class="mt-2 list-disc list-inside text-gray-600 space-y-1"></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="roadmap" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900">Development Roadmap</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">The SBKE will be developed in four distinct phases over 24 months. Use the filters to explore the timeline and hover over tasks for more details.</p>
+            </div>
+            <div class="flex justify-center space-x-2 md:space-x-4 mb-8">
+                <button class="phase-button px-4 py-2 rounded-full bg-white shadow text-gray-700 transition" data-phase="all">All Phases</button>
+                <button class="phase-button px-4 py-2 rounded-full bg-white shadow text-gray-700 transition" data-phase="1">Phase 1</button>
+                <button class="phase-button px-4 py-2 rounded-full bg-white shadow text-gray-700 transition" data-phase="2">Phase 2</button>
+                <button class="phase-button px-4 py-2 rounded-full bg-white shadow text-gray-700 transition" data-phase="3">Phase 3</button>
+                <button class="phase-button px-4 py-2 rounded-full bg-white shadow text-gray-700 transition" data-phase="4">Phase 4</button>
+            </div>
+            <div class="chart-container bg-white p-4 rounded-xl shadow-lg">
+                <canvas id="roadmapChart"></canvas>
+            </div>
+        </section>
+
+        <section id="impact" class="py-16">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900">Transformative Impact</h2>
+                <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">By unifying data and leveraging AI, the SBKE will revolutionize space biology research and mission planning.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                    <div class="text-3xl text-blue-500 mb-4">🚀</div>
+                    <h3 class="text-2xl font-bold text-gray-800">Accelerated Discovery</h3>
+                    <p class="mt-2 text-gray-600">Enable literature-based discovery and knowledge synthesis, connecting disparate findings to reveal new scientific insights and research directions.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                    <div class="text-3xl text-blue-500 mb-4">💡</div>
+                    <h3 class="text-2xl font-bold text-gray-800">AI-Powered Hypotheses</h3>
+                    <p class="mt-2 text-gray-600">Leverage AI to detect complex patterns in multi-omics and physiological data, generating novel, testable hypotheses for future experiments.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                    <div class="text-3xl text-blue-500 mb-4">🛰️</div>
+                    <h3 class="text-2xl font-bold text-gray-800">Smarter Mission Planning</h3>
+                    <p class="mt-2 text-gray-600">Provide data-driven tools for mission risk assessment and resource optimization, enhancing crew safety and success for long-duration spaceflight.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p class="mb-2">&copy; 2025 Space Biology Knowledge Engine Initiative</p>
+            <p class="text-lg font-bold text-blue-400 mb-2">COSMIC_PIONEERS</p>
+            <p class="text-sm text-gray-400">Team: Ali Qatary, Nezar Osama, Mariam Mahmoud, Eryny Emad, <span class="font-bold text-white">Hamza Sherif (Team Leader)</span></p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const componentData = {
+                'NASA OSDR': { description: 'Open Science Data Repository with omics and physiological data.', features: ['Multi-modal data', 'Analysis pipelines', 'Visualization tools'] },
+                'SpaceLID': { description: 'Space Life Investigation Database with 448+ investigations.', features: ['Comprehensive search', 'Categorized content', '90 species coverage'] },
+                'ETL Pipelines': { description: 'Extract, Transform, Load processes for data integration.', features: ['Automated processing', 'Error handling', 'Scalable architecture'] },
+                'Automated Curation': { description: 'AI-powered automatic data curation and annotation.', features: ['AI-driven annotation', 'Literature integration', 'Quality metrics'] },
+                'SLSO Ontology': { description: 'Space Life Sciences Ontology for unifying domain concepts.', features: ['BFO-based', 'Space-specific', 'Interoperable design'] },
+                'Data Classification': { description: 'AI models for organizing and tagging data.', features: ['Predictive modeling', 'Pattern recognition', 'Automated classification'] },
+                'Query Processing': { description: 'Semantic query processing and result ranking.', features: ['Semantic search', 'Relevance ranking', 'Faceted navigation'] },
+                'Inference Engine': { description: 'Automated reasoning and knowledge inference.', features: ['Rule-based reasoning', 'Probabilistic inference', 'Explanation generation'] },
+                'Knowledge Graph': { description: 'Integrated knowledge representation structure.', features: ['RDF/OWL format', 'SPARQL queries', 'Linked data principles'] },
+                'Web Portal': { description: 'User-friendly web interface for exploration.', features: ['Responsive design', 'Search interface', 'Data exploration tools'] },
+                'APIs': { description: 'RESTful APIs for programmatic access.', features: ['REST endpoints', 'Authentication', 'Rate limiting'] },
+                'Hypothesis Generation': { description: 'AI-assisted hypothesis generation from data patterns.', features: ['Pattern detection', 'Causal inference', 'Experimental design'] },
+                'Mission Planning': { description: 'Space mission planning and risk assessment support.', features: ['Risk modeling', 'Resource optimization', 'Timeline estimation'] }
+            };
+
+            const roadmapData = [
+                { phase: 1, timeline: [1, 6], component: 'Data Integration', activities: 'Set up ETL pipelines, establish data connections' },
+                { phase: 1, timeline: [1, 6], component: 'Core Ontology', activities: 'Deploy SLSO ontology, establish semantic framework' },
+                { phase:1, timeline: [1, 6], component: 'Basic Knowledge Graph', activities: 'Build initial KG structure, implement entity linking' },
+                { phase: 2, timeline: [7, 12], component: 'NLP Pipeline', activities: 'Implement text mining, entity recognition' },
+                { phase: 2, timeline: [7, 12], component: 'ML Models', activities: 'Develop predictive models, automated classification' },
+                { phase: 3, timeline: [13, 18], component: 'Advanced Analytics', activities: 'Build hypothesis generation, pattern detection' },
+                { phase: 3, timeline: [13, 18], component: 'User Experience Platform', activities: 'Develop web portal, visualization tools, APIs' },
+                { phase: 4, timeline: [19, 24], component: 'Performance Optimization', activities: 'Scale infrastructure, optimize queries, implement caching' },
+                { phase: 4, timeline: [19, 24], component: 'Advanced Applications', activities: 'Deploy mission planning & research discovery tools' },
+                { phase: 4, timeline: [19, 24], component: 'Community Integration', activities: 'Enable user contributions and feedback systems' },
+            ];
+            
+            function animateStat(elementId, finalValue, duration, suffix = '') {
+                const element = document.getElementById(elementId);
+                let start = 0;
+                const increment = finalValue / (duration / 16); 
+                
+                function update() {
+                    start += increment;
+                    if (start < finalValue) {
+                        element.textContent = Math.ceil(start) + suffix;
+                        requestAnimationFrame(update);
+                    } else {
+                        element.textContent = finalValue + suffix;
+                    }
+                }
+                update();
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateStat('studies-stat', 500, 2000, '+');
+                        animateStat('pubs-stat', 200, 2000, 'K+');
+                        animateStat('species-stat', 90, 2000, '+');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            observer.observe(document.getElementById('vision'));
+
+            const componentItems = document.querySelectorAll('.component-item');
+            const detailsTitle = document.getElementById('details-title');
+            const detailsDescription = document.getElementById('details-description');
+            const detailsFeaturesContainer = document.getElementById('details-features-container');
+            const detailsFeatures = document.getElementById('details-features');
+
+            componentItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const componentName = item.dataset.component;
+                    const data = componentData[componentName];
+
+                    componentItems.forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+
+                    if (data) {
+                        detailsTitle.textContent = componentName;
+                        detailsDescription.textContent = data.description;
+                        detailsFeatures.innerHTML = data.features.map(f => `<li>${f}</li>`).join('');
+                        detailsFeaturesContainer.classList.remove('hidden');
+                    }
+                });
+            });
+
+            const ctx = document.getElementById('roadmapChart').getContext('2d');
+            const phaseColors = { 1: 'rgba(59, 130, 246, 0.7)', 2: 'rgba(139, 92, 246, 0.7)', 3: 'rgba(239, 68, 68, 0.7)', 4: 'rgba(16, 185, 129, 0.7)' };
+            const phaseBorders = { 1: 'rgba(59, 130, 246, 1)', 2: 'rgba(139, 92, 246, 1)', 3: 'rgba(239, 68, 68, 1)', 4: 'rgba(16, 185, 129, 1)' };
+
+            let roadmapChart;
+            
+            function createChart(data) {
+                if(roadmapChart) {
+                    roadmapChart.destroy();
+                }
+                roadmapChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(d => d.component),
+                        datasets: [{
+                            label: 'Timeline (Months)',
+                            data: data.map(d => d.timeline),
+                            backgroundColor: data.map(d => phaseColors[d.phase]),
+                            borderColor: data.map(d => phaseBorders[d.phase]),
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            borderSkipped: false,
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                min: 0,
+                                max: 24,
+                                grid: { color: 'rgba(200, 200, 200, 0.2)' },
+                                title: { display: true, text: 'Months' }
+                            },
+                            y: {
+                                grid: { display: false }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const item = data[context.dataIndex];
+                                        return `Phase ${item.phase}: Months ${item.timeline[0]}-${item.timeline[1]}. Activities: ${item.activities}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createChart(roadmapData);
+
+            const phaseButtons = document.querySelectorAll('.phase-button');
+            phaseButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const phase = button.dataset.phase;
+                    
+                    phaseButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    if (phase === 'all') {
+                        createChart(roadmapData);
+                    } else {
+                        const filteredData = roadmapData.filter(d => d.phase == phase);
+                        createChart(filteredData);
+                    }
+                });
+            });
+            document.querySelector('.phase-button[data-phase="all"]').classList.add('active');
+
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active-nav');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active-nav');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
